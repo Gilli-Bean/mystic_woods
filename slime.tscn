@@ -1,0 +1,157 @@
+[gd_scene load_steps=13 format=3 uid="uid://cabnqfmileii3"]
+
+[ext_resource type="Texture2D" uid="uid://bk7aafg8oq5xe" path="res://mystic_woods/sprites/characters/slime.png" id="1_2jusx"]
+[ext_resource type="Script" path="res://slime.gd" id="1_okjj4"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vws18"]
+size = Vector2(14, 4.5)
+
+[sub_resource type="Animation" id="Animation_ptvaf"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_nvo3d"]
+resource_name = "attack"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.7),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [14, 20]
+}
+
+[sub_resource type="Animation" id="Animation_xvxqy"]
+resource_name = "death"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [28, 32]
+}
+
+[sub_resource type="Animation" id="Animation_owfeb"]
+resource_name = "idle"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0, 3]
+}
+
+[sub_resource type="Animation" id="Animation_uaycw"]
+resource_name = "running"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [7, 12]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_p7wn3"]
+_data = {
+"RESET": SubResource("Animation_ptvaf"),
+"attack": SubResource("Animation_nvo3d"),
+"death": SubResource("Animation_xvxqy"),
+"idle": SubResource("Animation_owfeb"),
+"running": SubResource("Animation_uaycw")
+}
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vyfpo"]
+radius = 42.107
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_3advd"]
+radius = 26.4764
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fkiog"]
+
+[node name="Slime" type="CharacterBody2D"]
+collision_layer = 8
+collision_mask = 13
+script = ExtResource("1_okjj4")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(-27, 22)
+texture = ExtResource("1_2jusx")
+hframes = 7
+vframes = 5
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-27, 28)
+shape = SubResource("RectangleShape2D_vws18")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_p7wn3")
+}
+
+[node name="Label" type="Label" parent="."]
+offset_left = -45.0
+offset_top = -4.0
+offset_right = -5.0
+offset_bottom = 22.0
+text = "IDLE"
+
+[node name="Detect" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Detect"]
+position = Vector2(-27, 24)
+shape = SubResource("CircleShape2D_vyfpo")
+
+[node name="Attack" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Attack"]
+position = Vector2(-27, 25)
+shape = SubResource("CircleShape2D_3advd")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(27, 27)
+shape = SubResource("RectangleShape2D_fkiog")
+
+[connection signal="body_entered" from="Detect" to="." method="_on_detect_body_entered"]
+[connection signal="body_exited" from="Detect" to="." method="_on_detect_body_exited"]
+[connection signal="body_entered" from="Attack" to="." method="_on_attack_body_entered"]
+[connection signal="body_exited" from="Attack" to="." method="_on_attack_body_exited"]

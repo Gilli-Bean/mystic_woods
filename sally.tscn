@@ -1,0 +1,184 @@
+[gd_scene load_steps=13 format=3 uid="uid://i7ixyew0dfvq"]
+
+[ext_resource type="Texture2D" uid="uid://buq556m3iuhsg" path="res://mystic_woods/sprites/characters/skeleton.png" id="1_5dofx"]
+[ext_resource type="Script" path="res://sally.gd" id="2_ca78p"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gqs4h"]
+size = Vector2(8, 2)
+
+[sub_resource type="Animation" id="Animation_1t3es"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Hurtbox/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_6l1id"]
+resource_name = "attack"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [12, 16]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Hurtbox/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [true, false, true]
+}
+
+[sub_resource type="Animation" id="Animation_51q3p"]
+resource_name = "death"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [24, 28]
+}
+
+[sub_resource type="Animation" id="Animation_evadp"]
+resource_name = "idle"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0, 5]
+}
+
+[sub_resource type="Animation" id="Animation_yxmu6"]
+resource_name = "run"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [6, 11]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_lixi4"]
+_data = {
+"RESET": SubResource("Animation_1t3es"),
+"attack": SubResource("Animation_6l1id"),
+"death": SubResource("Animation_51q3p"),
+"idle": SubResource("Animation_evadp"),
+"run": SubResource("Animation_yxmu6")
+}
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_528wl"]
+radius = 60.0083
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vj71h"]
+radius = 16.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nx52h"]
+size = Vector2(26, 32)
+
+[node name="Sally" type="CharacterBody2D" groups=["minimap_objects"]]
+collision_layer = 8
+collision_mask = 13
+script = ExtResource("2_ca78p")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_5dofx")
+hframes = 6
+vframes = 5
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-1, 21)
+shape = SubResource("RectangleShape2D_gqs4h")
+disabled = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_lixi4")
+}
+
+[node name="Label" type="Label" parent="."]
+offset_left = -17.0
+offset_top = -15.0
+offset_right = 27.0
+offset_bottom = 11.0
+text = "IDLE"
+
+[node name="Detect" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Detect"]
+position = Vector2(0, 15)
+shape = SubResource("CircleShape2D_528wl")
+
+[node name="Attack" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Attack"]
+position = Vector2(0, 15)
+shape = SubResource("CircleShape2D_vj71h")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(12, 11)
+shape = SubResource("RectangleShape2D_nx52h")
+disabled = true
+
+[connection signal="body_entered" from="Detect" to="." method="_on_detect_body_entered"]
+[connection signal="body_exited" from="Detect" to="." method="_on_detect_body_exited"]
+[connection signal="body_entered" from="Attack" to="." method="_on_attack_body_entered"]
+[connection signal="body_exited" from="Attack" to="." method="_on_attack_body_exited"]
+[connection signal="body_entered" from="Hurtbox" to="." method="_on_hurtbox_body_entered"]
